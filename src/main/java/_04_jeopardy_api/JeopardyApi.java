@@ -33,7 +33,7 @@ public class JeopardyApi {
 
         //1  Use the WebClient code from the previous exercises to make the request:
         //Note:
-        //The base URL has already been provided, but we we need to take the "value" parameter passed into
+        //The base URL has already been provided, but we need to take the "value" parameter passed into
         //this method and supply it as a query parameter with the name of "value".  This allows us to retrieve a question
         //with the specified point value.
         //
