@@ -15,6 +15,7 @@ import static org.mockito.Mockito.*;
 
 class MyDonutShopTest {
 
+
     MyDonutShop myDonutShop;
 
     @Mock
@@ -36,23 +37,46 @@ class MyDonutShopTest {
     @Test
     void itShouldTakeDeliveryOrder() throws Exception {
         //given
+        myDonutShop.openForTheDay();
+        when(bakeryService.getDonutsRemaining()).thenReturn(1);
         Order o = new Order("CUSTOMER_NAME",
                 "CUSTOMER_PHONE_NUMBER",
                 1,
                 5.00,
                 "CREDIT_CARD_NUMBER",
                 true);
-
+        when(paymentService.charge(o)).thenReturn(true);
         //when
-        myDonutShop.openForTheDay();
         myDonutShop.takeOrder(o);
 
         //then
-        verify(myDonutShop, times(1)).addOrder(o);
+        verify(paymentService, times(1)).charge(o);
+        verify(deliveryService, times(1)).scheduleDelivery(o);
+        verify(bakeryService, times(1)).removeDonuts(1);
+
+
     }
 
     @Test
-    void givenInsufficientDonutsRemaining_whenTakeOrder_thenThrowIllegalArgumentException() {
+    void givenInsufficientDonutsRemaining_whenTakeOrder_thenThrowIllegalArgumentException() throws Exception {
+        //given
+        myDonutShop.openForTheDay();
+        Order o = new Order("CUSTOMER_NAME",
+                "CUSTOMER_PHONE_NUMBER",
+                55,
+                5.00,
+                "CREDIT_CARD_NUMBER",
+                true);
+
+        //when
+        Throwable exceptionThrown = assertThrows(Exception.class, () -> myDonutShop.takeOrder(o));
+        //then
+        assertEquals(exceptionThrown.getMessage(), "Insufficient donuts remaining");
+        verify(bakeryService, never()).removeDonuts(o.getNumberOfDonuts());
+    }
+
+    @Test
+    void givenNotOpenForBusiness_whenTakeOrder_thenThrowIllegalStateException() throws Exception {
         //given
         Order o = new Order("CUSTOMER_NAME",
                 "CUSTOMER_PHONE_NUMBER",
@@ -60,23 +84,15 @@ class MyDonutShopTest {
                 5.00,
                 "CREDIT_CARD_NUMBER",
                 true);
+        myDonutShop.closeForTheDay();
 
         //when
-        myDonutShop.openForTheDay();
-
-        //then
         Throwable exceptionThrown = assertThrows(Exception.class, () -> myDonutShop.takeOrder(o));
-        assertEquals(exceptionThrown.getMessage(), "Insufficient donuts remaining");
-        verify(myDonutShop, never()).addOrder(o);
-    }
-
-    @Test
-    void givenNotOpenForBusiness_whenTakeOrder_thenThrowIllegalStateException(){
-        //given
-
-        //when
 
         //then
+        assertEquals(exceptionThrown.getMessage(), "Sorry we're currently closed");
+        assertEquals(0, bakeryService.getDonutsRemaining());
+        verify(bakeryService, times(1)).throwAwayLeftovers();
     }
 
 }
