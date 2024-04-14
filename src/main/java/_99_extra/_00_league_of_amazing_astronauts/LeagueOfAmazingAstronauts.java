@@ -4,7 +4,6 @@ import _99_extra._00_league_of_amazing_astronauts.models.Astronaut;
 import _99_extra._00_league_of_amazing_astronauts.models.Rocketship;
 
 public class LeagueOfAmazingAstronauts {
-
     Rocketship rocketship = new Rocketship();
 
     public LeagueOfAmazingAstronauts() {
