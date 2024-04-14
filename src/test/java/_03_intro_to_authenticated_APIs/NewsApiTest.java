@@ -29,25 +29,27 @@ class NewsApiTest {
 
     @BeforeEach
     void setUp() {
-
+        newsApi = new NewsApi();
     }
 
     @Test
     void itShouldGetNewsStoryByTopic() {
         //given
-
+        ApiExampleWrapper example = new ApiExampleWrapper();
         //when
-
+        ApiExampleWrapper actual = newsApi.getNewsStoryByTopic("Liechtenstein");
         //then
+        assertEquals(example, actual);
     }
 
     @Test
     void itShouldFindStory(){
         //given
-
+        newsApi.testRequest();
         //when
-
+        String str = newsApi.findStory("duck");
         //then
+        verify(newsApi, times(1)).getNewsStoryByTopic("duck");
     }
 
 
