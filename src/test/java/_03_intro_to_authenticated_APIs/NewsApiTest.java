@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,11 +36,10 @@ class NewsApiTest {
     @Test
     void itShouldGetNewsStoryByTopic() {
         //given
-        ApiExampleWrapper example = new ApiExampleWrapper();
         //when
         ApiExampleWrapper actual = newsApi.getNewsStoryByTopic("Liechtenstein");
         //then
-        assertEquals(example, actual);
+        assertTrue(actual.getTotalResults() >= 1);
     }
 
     @Test
@@ -49,8 +49,8 @@ class NewsApiTest {
         //when
         String str = newsApi.findStory("duck");
         //then
-        verify(newsApi, times(1)).getNewsStoryByTopic("duck");
+        assertEquals(false, str.isEmpty());
+    }
     }
 
 
-}

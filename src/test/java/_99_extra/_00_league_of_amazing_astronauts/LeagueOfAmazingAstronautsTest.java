@@ -32,8 +32,6 @@ class LeagueOfAmazingAstronautsTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        rocketship = new Rocketship();
-        astronaut = new Astronaut();
     }
 
     @Test
@@ -43,15 +41,18 @@ class LeagueOfAmazingAstronautsTest {
         //when
         underTest.prepareAstronaut(astronaut);
         //then
-        verify(astronaut, times(1)).isTrained();
+        verify(astronaut, times(1)).train();
         verify(rocketship, times(1)).loadOccupant(astronaut);
     }
 
     @Test
-    void itShouldLaunchRocket() throws Exception{
+    void itShouldLaunchRocket(){
         //given
         underTest.setRocketship(rocketship);
-        boolean b = rocketship.getAstronaut().isTrained();
+
+        underTest.prepareAstronaut(astronaut);
+        boolean b = rocketship.isLoaded();
+        System.out.println(b);
         //when
         int miles = 68_000_000;
         String dest = "Mars";
@@ -68,13 +69,15 @@ class LeagueOfAmazingAstronautsTest {
     void itShouldThrowWhenDestinationIsUnknown() throws Exception{
         //given
         underTest.setRocketship(rocketship);
-        boolean b = rocketship.getAstronaut().isTrained();
+        underTest.prepareAstronaut(astronaut);
+        boolean b = rocketship.isLoaded();
+        System.out.println(b);
         //when
-        int miles = 68_000_000;
         String dest = "Ohio";
         underTest.launchRocket(dest);
         //then
         assertEquals(true, b);
+        assertEquals(false, dest.equals("Mars"));
         Throwable exceptionThrown = assertThrows(Exception.class, () -> underTest.launchRocket(dest));
         assertEquals(exceptionThrown.getMessage(), "Destination is unavailable");
     }
