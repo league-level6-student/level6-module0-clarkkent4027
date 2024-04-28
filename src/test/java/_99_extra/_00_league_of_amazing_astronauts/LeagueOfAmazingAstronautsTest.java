@@ -48,17 +48,16 @@ class LeagueOfAmazingAstronautsTest {
     @Test
     void itShouldLaunchRocket(){
         //given
+        astronaut = new Astronaut();
         underTest.setRocketship(rocketship);
-
         underTest.prepareAstronaut(astronaut);
-        boolean b = rocketship.isLoaded();
-        System.out.println(b);
+        when(rocketship.isLoaded()).thenReturn(true);
         //when
         int miles = 68_000_000;
         String dest = "Mars";
         underTest.launchRocket(dest);
         //then
-        assertEquals(true, b);
+        assertEquals(true, rocketship.isLoaded());
         verify(rocketship, times(1)).setDestination(dest, miles);
         verify(rocketship, times(1)).launch();
 
@@ -70,24 +69,26 @@ class LeagueOfAmazingAstronautsTest {
         //given
         underTest.setRocketship(rocketship);
         underTest.prepareAstronaut(astronaut);
-        boolean b = rocketship.isLoaded();
-        System.out.println(b);
+        when(rocketship.isLoaded()).thenReturn(true);
         //when
         String dest = "Ohio";
-        underTest.launchRocket(dest);
         //then
-        assertEquals(true, b);
-        assertEquals(false, dest.equals("Mars"));
         Throwable exceptionThrown = assertThrows(Exception.class, () -> underTest.launchRocket(dest));
+        assertEquals(false, dest.equals("Mars"));
         assertEquals(exceptionThrown.getMessage(), "Destination is unavailable");
     }
 
     @Test
     void itShouldThrowNotLoaded() throws Exception{
         //given
-
+        underTest.setRocketship(rocketship);
         //when
+        when(rocketship.isLoaded()).thenReturn(false);
+        when(astronaut.isTrained()).thenReturn(false);
+        String dest = "Mars";
         //then
+        Throwable exceptionThrown = assertThrows(Exception.class, () -> underTest.launchRocket(dest));
+        assertEquals(exceptionThrown.getMessage(), "Rocketship is not loaded");
 
     }
 }

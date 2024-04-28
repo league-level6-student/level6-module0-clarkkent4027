@@ -43,7 +43,7 @@ public class Rocketship {
     }
 
     public boolean isLoaded(){
-        return true;
+        return this.astronaut!=null;
     }
 
     public Astronaut getAstronaut() {
